@@ -1,0 +1,67 @@
+# README
+
+## Title 
+Using an evolutionary epidemiological model of pandemics to estimate the infection fatality ratio for humans infected with avian influenza viruses
+
+---
+
+## Summary
+Our work quantifies the value of preventing human avian influenza virus (AIV) infections to both the individual and to society. We develop a stochastic model that describes the epidemiological and evolutionary processes that give rise to an influenza pandemic of zoonotic origin. By combining observations describing the occurrence of pandemics in the past with a model that describes the epidemiological and evolutionary processes that occur when an animal strain of influenza adapts to cause a pandemic, we estimate how many human influenza infections of zoonotic origin are occurring annually and estimate the infection fatality ratio. Our approach overcomes the challenge of limited surveillance to detect asymptomatic human AIV infections.
+
+---
+
+## Repository overview
+This repository contains the code and outputs used to implement our model that describes the epidemiological and evolutionary processes that give rise to an influenza pandemic of zoonotic origin.
+---
+
+### Code version
+- R version 4.4.1
+
+### Packages versions
+- patchwork (1.3.2)
+- dplyr (1.1.4)
+- ggplot2 (4.0.1)
+- ggtext (0.1.2)
+- scales (1.4.0)
+- ggrepel (0.9.6)
+- grid (4.4.1)
+- lhs (1.2.0)
+- sensitivity (1.30.2)
+- triangle (1.0)
+- bbmle (1.0.25.1)
+- lubridate (1.9.4)
+- ggridges (0.5.7)
+
+---
+
+### File descriptions
+
+### Code
+The `Code/` directory contains the following scripts:
+- `Interpandemic_periods.R`: Models the interpandemic period distributions
+- `IFR.R`: Estimates the annual number of human AIV infections and the infection fatality ratio
+- `Pandemic_delay.R`: Estimates the effect of preventing AIV spillovers on pandemic delay time
+- `Spillover_comparison.R`: Compares estimated spillover rates with Day et al. (2006)
+- `Risk.R`: Estimates the risk of human infection with HPAI from bird migration and risk of coinfection with human influenza
+
+
+### Ouput
+The `Output/` directory contains output files:
+- `mean_nh_38.csv`, `mean_nh_53.5.csv`, `mean_nh_18.5.csv`
+- `transformed_samples_38.csv`, `transformed_samples_53.5.csv`, `transformed_samples_18.5.csv`
+
+These files contain estimates of the annual number of human AIV infections and transformed posterior samples for mean interpandemic periods of 38, 53.5, and 18.5 years.
+
+---
+
+## Instructions to run the software
+1. Install R version 4.4.1.
+2. Install required R packages listed above.
+3. Set the working directory to the repository root.
+4. Run the scripts in the following order:
+   - `Interpandemic_periods.R`
+   - `IFR.R`
+   - `Pandemic_delay.R`
+   - `Spillover_comparison.R`
+   - `Risk.R`
+5. Outputs will be saved automatically to the `Output/` directory.
