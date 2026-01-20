@@ -31,6 +31,7 @@ This repository contains the code and outputs used to implement our model that d
 - bbmle (1.0.25.1)
 - lubridate (1.9.4)
 - ggridges (0.5.7)
+- here (1.0.2)
 
 ---
 
