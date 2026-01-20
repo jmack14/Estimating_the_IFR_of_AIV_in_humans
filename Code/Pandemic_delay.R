@@ -3,14 +3,20 @@
 # ============================================================
 
 # ============================================================
-# Setup
+# Load libraries
 # ============================================================
 
 library(dplyr)
 library(ggplot2)
+library(here)
 
-setwd("C:/Users/ER/Desktop/Fall_2025/Grad_school/thesis/figures")
-transformed_samples <- read.csv("transformed_samples_38.csv")
+# ============================================================
+# Read transformed samples
+# ============================================================
+
+transformed_file <- here("..", "Output", "transformed_samples_38.csv")
+
+transformed_samples <- read.csv(transformed_file, stringsAsFactors = FALSE) # transformed samples
 
 # ============================================================
 # Calculate baseline mean pi

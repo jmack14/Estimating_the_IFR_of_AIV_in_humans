@@ -3,7 +3,7 @@
 # ============================================================
 
 # ============================================================
-# Setup
+# Load libraries
 # ============================================================
 
 library(patchwork)
@@ -14,9 +14,15 @@ library(ggtext)
 library(lhs)
 library(sensitivity)
 library(triangle)
+library(here)
 
-setwd("C:/Users/ER/Desktop/Fall_2025/Grad_school/thesis/figures")
-load("gamma_interpandemic_results.RData")
+# ============================================================
+# Load interpandemic period results
+# ============================================================
+
+Interpandemic_results <- here("..", "Output", "Interpandemic_period_results.RData")
+
+load(Interpandemic_results)  
 
 # ============================================================
 # Helper functions
@@ -34,7 +40,7 @@ spillover_model <- function(parameters, R0) {
 run_lhs <- function(R0) {
   
   param_ranges <- list(
-    psi   = list(shape = alpha0, scale = delta / alpha0),
+    psi   = list(shape = delta/theta0, scale = theta0),
     a     = c(0.000012, 0.000024),
     Rstar = c(1, 2, 1.1)
   )
@@ -95,6 +101,43 @@ dark.grey <- data.frame(
 # ============================================================
 # Plot the minimum annual number of spillovers (P=1): Figure 4A 
 # ============================================================
+
+Pmodel <- function(parameters, R0) {
+  psi <- parameters[1]
+  a   <- parameters[2]
+  (1 - R0) / (psi * a)
+}
+
+run_Pmodel <- function(R0) {
+  
+  param_ranges <- list(
+    psi = list(shape = delta/theta0, scale = theta0),
+    a   = c(0.000012, 0.000024)
+  )
+  
+  lhs_samples <- randomLHS(10000, length(param_ranges))
+  
+  transformed_samples <- data.frame(
+    psi = qgamma(lhs_samples[,1], shape = param_ranges$psi$shape, scale = param_ranges$psi$scale),
+    a   = qunif(lhs_samples[,2], min = param_ranges$a[1], max = param_ranges$a[2])
+  )
+  
+  output <- apply(transformed_samples, 1, Pmodel, R0 = R0)
+  
+  data.frame(
+    n        = sort(output),
+    cum.prob = seq(1/length(output),1,1/length(output)),
+    R0       = R0
+  )
+}
+
+ridgeP <- bind_rows(
+  run_Pmodel(0.0) %>% mutate(n1=292,n2=583,n3=3167,n4=6333),
+  run_Pmodel(0.2) %>% mutate(n1=233,n2=467,n3=2533,n4=5067),
+  run_Pmodel(0.4) %>% mutate(n1=175,n2=350,n3=1900,n4=3800),
+  run_Pmodel(0.6) %>% mutate(n1=117,n2=233,n3=1267,n4=2533),
+  run_Pmodel(0.8) %>% mutate(n1=58,n2=117,n3=633,n4=1267)
+)
 
 ridges_min <- ggplot() +
   geom_polygon(data = dark.grey, aes(x = n, y = R0),

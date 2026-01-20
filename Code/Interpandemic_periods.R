@@ -3,7 +3,7 @@
 # ============================================================
 
 # ============================================================
-# Setup
+# Load libraries
 # ============================================================
 
 library(bbmle)
@@ -13,8 +13,6 @@ library(ggplot2)
 library(ggtext)
 library(scales)
 library(lubridate)
-
-setwd("C:/Users/ER/Desktop/Fall_2025/Grad_school/thesis/figures")
 
 # ============================================================
 # Interpandemic period data
@@ -195,8 +193,6 @@ Figure_A2 <- ggplot(plot_data, aes(x = dates, y = dd)) +
     axis.title = element_text(size = 16, face = "bold"),
     axis.title.y = element_markdown()
   )
-
-Figure_A2
 
 ggsave("Figure_A2.png", Figure_A2, height = 8, width = 10)
 

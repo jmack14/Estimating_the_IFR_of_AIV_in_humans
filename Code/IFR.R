@@ -3,11 +3,8 @@
 # ============================================================
 
 # ============================================================
-# Setup
+# Load libraries
 # ============================================================
-
-setwd("C:/Users/ER/Desktop/Fall_2025/Grad_school/thesis/figures")
-load("Interpandemic_period_results.RData")
 
 library(patchwork)
 library(dplyr)
@@ -19,6 +16,15 @@ library(grid)
 library(lhs)
 library(sensitivity)
 library(triangle)
+library(here)
+
+# ============================================================
+# Load interpandemic period results
+# ============================================================
+
+Interpandemic_results <- here("..", "Output", "Interpandemic_period_results.RData")
+
+load(Interpandemic_results)  
 
 # ============================================================
 # pi_i function
@@ -234,7 +240,7 @@ q2 <- get_quarts(ifr_2)
 q3 <- get_quarts(ifr_3)
 
 # ============================================================
-# Plot the infection fatality ratios: Figure 2B
+# Plot the IFRs: Figure 2B
 # ============================================================
 
 Figure_2B <- ggplot() +
