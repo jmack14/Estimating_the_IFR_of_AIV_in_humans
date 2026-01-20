@@ -41,7 +41,7 @@ The `Code/` directory contains the following scripts:
 - `Interpandemic_periods.R`: Models the interpandemic period distributions
 - `IFR.R`: Estimates the annual number of human AIV infections and the infection fatality ratio
 - `Pandemic_delay.R`: Estimates the effect of preventing AIV spillovers on pandemic delay time
-- `Spillover_comparison.R`: Compares estimated spillover rates with Day et al. (2006)
+- `Spillover_comparison.R`: Compares estimated number of zoonotic spillovers with Day et al.,2006
 - `Risk.R`: Estimates the risk of human infection with HPAI from bird migration and risk of coinfection with human influenza
 
 
