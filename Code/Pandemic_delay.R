@@ -14,9 +14,17 @@ library(here)
 # Read transformed samples
 # ============================================================
 
-transformed_file <- here("..", "Output", "transformed_samples_38.csv")
+# Path to transformed samples relative to project root
+transformed_file <- here("Code", "Clean_code", "Output", "transformed_samples_38.csv")
 
-transformed_samples <- read.csv(transformed_file, stringsAsFactors = FALSE) # transformed samples
+# Check if file exists before reading
+if (!file.exists(transformed_file)) {
+  stop("Error: transformed_samples_38.csv not found.
+       Make sure the Output folder is inside the project root.")
+}
+
+transformed_samples <- read.csv(transformed_file, stringsAsFactors = FALSE) 
+message("Transformed samples loaded successfully!")
 
 # ============================================================
 # Calculate baseline mean pi

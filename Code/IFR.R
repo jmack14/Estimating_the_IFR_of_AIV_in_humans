@@ -22,9 +22,18 @@ library(here)
 # Load interpandemic period results
 # ============================================================
 
-Interpandemic_results <- here("..", "Output", "Interpandemic_period_results.RData")
+# Path relative to project root
+Interpandemic_results <- here("Code", "Clean_code", "Output", "Interpandemic_period_results.RData")
 
-load(Interpandemic_results)  
+# Check if file exists before loading
+if (!file.exists(Interpandemic_results)) {
+  stop("Error: Interpandemic_period_results.RData not found.
+       Make sure the Output folder is inside Code/Clean_code/")
+}
+
+# Load the file
+load(Interpandemic_results)
+message("Interpandemic period results loaded successfully!")
 
 # ============================================================
 # pi_i function
@@ -293,6 +302,67 @@ Figure_2 <- Figure_2A + Figure_2B +
 ggsave("Figure_2.png", width = 12, height = 14, dpi = 300)
 
 # ============================================================
+# Plot IFR comparison: Figure 3
+# ============================================================
+
+# IFR data
+ifr_data <- data.frame(
+  Virus = c("Seasonal influenza",
+            "SARS-CoV-2",
+            "AIV (53.5 years)",
+            "AIV (38 years)",
+            "AIV (18.5 years)"),
+  
+  estimate = c(4.7, 16, 16, 32, 46),
+  lower = c(2.9, 16, 5.6, 9.6, 17),
+  upper = c(6.5, 16, 33, 75, 97)
+)
+
+# Order for plotting
+ifr_data$Virus <- factor(
+  ifr_data$Virus,
+  levels = rev(c("AIV (53.5 years)",
+                 "AIV (38 years)",
+                 "AIV (18.5 years)",
+                 "SARS-CoV-2",
+                 "Seasonal influenza"))
+)
+
+Figure_3 <- ggplot(ifr_data, aes(x = estimate, y = Virus)) +
+  
+  geom_errorbarh(aes(
+    xmin = ifelse(Virus != "SARS-CoV-2", lower, NA),
+    xmax = ifelse(Virus != "SARS-CoV-2", upper, NA)
+  ),
+  height = 0.2,
+  size = 1.2) +
+  
+  geom_point(size = 4, color = "red") +
+  
+  geom_text(aes(label = estimate),
+            nudge_x = 2,
+            nudge_y = 0.20,
+            size = 5,
+            fontface = "bold") +
+  
+  scale_x_continuous(expand = expansion(mult = c(0.02, 0.12))) +
+  
+  xlab("Infection fatality ratio per 10,000 infections") +
+  ylab(NULL) +
+  
+  theme_bw() +
+  theme(
+    axis.text = element_text(size = 16, face = "bold", color = "black"),   # tick labels
+    axis.title = element_text(size = 16, face = "bold", color = "black")   # axis titles
+  )
+
+ggsave("Figure_3.png",
+       Figure_3,
+       width = 8,
+       height = 5,
+       dpi = 300)
+
+# ============================================================
 # Plot parameter distributions: Figure A1
 # ============================================================
 
@@ -305,7 +375,7 @@ plot_distributions <- function(transformed_samples) {
     theme_bw() + theme(plot.title = element_text(hjust = 0.5, face = "bold", size = 16),
                        axis.text = element_text(size = 16, face = "bold"),
                        axis.title = element_text(size = 16, face = "bold")) +
-    ggtitle("Probability that a strain of HPAI with pandemic potential emerges, *a*") +
+    ggtitle("Probability that a strain of AIV with pandemic potential emerges, *a*") +
     theme(plot.title = element_markdown())
   
   plot_Rstar <- ggplot(transformed_samples, aes(x = Rstar)) +
@@ -314,7 +384,7 @@ plot_distributions <- function(transformed_samples) {
     theme_bw() + theme(plot.title = element_text(hjust = 0.5, face = "bold", size = 16),
                        axis.text = element_text(size = 16, face = "bold"),
                        axis.title = element_text(size = 16, face = "bold")) +
-    ggtitle("Reproduction number of a reassortment HPAI virus in humans, *R**") +
+    ggtitle("Reproduction number of a reassortant AIV in humans, *R**") +
     theme(plot.title = element_markdown())
   
   plot_R0 <- ggplot(transformed_samples, aes(x = R0)) +
@@ -323,7 +393,7 @@ plot_distributions <- function(transformed_samples) {
     theme_bw() + theme(plot.title = element_text(hjust = 0.5, face = "bold", size = 16),
                        axis.text = element_text(size = 16, face = "bold"),
                        axis.title = element_text(size = 16, face = "bold")) +
-    ggtitle("Reproduction number of a HPAI virus in humans prior to evolutionary change, *R*<sub>0") +
+    ggtitle("Reproduction number of an AIV in humans prior to evolutionary change, *R*<sub>0") +
     theme(plot.title = element_markdown())
   
   return((plot_a)/(plot_Rstar)/(plot_R0))

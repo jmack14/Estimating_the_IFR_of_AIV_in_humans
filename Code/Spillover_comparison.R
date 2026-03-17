@@ -20,9 +20,18 @@ library(here)
 # Load interpandemic period results
 # ============================================================
 
-Interpandemic_results <- here("..", "Output", "Interpandemic_period_results.RData")
+# Path relative to project root
+Interpandemic_results <- here("Code", "Clean_code", "Output", "Interpandemic_period_results.RData")
 
-load(Interpandemic_results)  
+# Check if file exists before loading
+if (!file.exists(Interpandemic_results)) {
+  stop("Error: Interpandemic_period_results.RData not found.
+       Make sure the Output folder is inside Code/Clean_code/")
+}
+
+# Load the file
+load(Interpandemic_results)
+message("Interpandemic period results loaded successfully!") 
 
 # ============================================================
 # Helper functions
