@@ -173,30 +173,6 @@ CI_theta
 LR <- -2 * (logLik(mod0)[1] - logLik(mod)[1])
 
 # ============================================================
-# Plot the effect of data on the interpandemic period: Figure A2
-# ============================================================
-
-plot_data <- data.frame(
-  dates = dates,
-  dd    = dd,
-  mean  = delta0 + delta1 * year
-)
-
-Figure_A2 <- ggplot(plot_data, aes(x = dates, y = dd)) +
-  geom_point(size = 4) +
-  geom_line(aes(y = mean)) +
-  xlab("Year of pandemic start") +
-  ylab("Interpandemic period, *Ψ*") +
-  theme_bw() +
-  theme(
-    axis.text  = element_text(size = 16, face = "bold"),
-    axis.title = element_text(size = 16, face = "bold"),
-    axis.title.y = element_markdown()
-  )
-
-ggsave("Figure_A2.png", Figure_A2, height = 8, width = 10)
-
-# ============================================================
 # Save results
 # ============================================================
 
@@ -303,4 +279,50 @@ Figure_1 <- ggplot(Timeline, aes(x = when, y = 0)) +
   )
 
 ggsave("Figure_1.png", Figure_1, height = 6, width = 10)
+
+# ============================================================
+# Plot interpandemic period distributions: Figure A2
+# ============================================================
+
+period = seq(0, 100)
+psi.fit = data.frame(period, prob = dgamma(period, shape = alpha0, scale = theta0))
+
+Figure_A2 = ggplot(psi.fit, aes(period, prob)) +
+  geom_ribbon(aes(ymin = 0, ymax = prob),
+              fill = "steelblue", color = "black") +
+  xlab("Interpandemic period, *ψ* (years)") +
+  ylab("Probability") +
+  theme_bw() +
+  theme(
+    axis.text = element_text(size = 16, face = "bold"),
+    axis.title = element_text(size = 16, face = "bold"),
+    legend.position = "none"
+  ) +
+  theme(axis.title.x = element_markdown())
+
+ggsave("Figure_A2.png", Figure_A2, height = 4, width = 10)
+
+# ============================================================
+# Plot the effect of date on the interpandemic period: Figure A3
+# ============================================================
+
+plot_data <- data.frame(
+  dates = dates,
+  dd    = dd,
+  mean  = delta0 + delta1 * year
+)
+
+Figure_A3 <- ggplot(plot_data, aes(x = dates, y = dd)) +
+  geom_point(size = 4) +
+  geom_line(aes(y = mean)) +
+  xlab("Year of pandemic start") +
+  ylab("Interpandemic period, *Ψ*") +
+  theme_bw() +
+  theme(
+    axis.text  = element_text(size = 16, face = "bold"),
+    axis.title = element_text(size = 16, face = "bold"),
+    axis.title.y = element_markdown()
+  )
+
+ggsave("Figure_A3.png", Figure_A3, height = 8, width = 10)
 
