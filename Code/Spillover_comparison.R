@@ -108,45 +108,8 @@ dark.grey <- data.frame(
 )
 
 # ============================================================
-# Plot the minimum annual number of spillovers (P=1): Figure 4A 
+# Plot minimum annual spillovers: Fig5A
 # ============================================================
-
-Pmodel <- function(parameters, R0) {
-  psi <- parameters[1]
-  a   <- parameters[2]
-  (1 - R0) / (psi * a)
-}
-
-run_Pmodel <- function(R0) {
-  
-  param_ranges <- list(
-    psi = list(shape = delta/theta0, scale = theta0),
-    a   = c(0.000012, 0.000024)
-  )
-  
-  lhs_samples <- randomLHS(10000, length(param_ranges))
-  
-  transformed_samples <- data.frame(
-    psi = qgamma(lhs_samples[,1], shape = param_ranges$psi$shape, scale = param_ranges$psi$scale),
-    a   = qunif(lhs_samples[,2], min = param_ranges$a[1], max = param_ranges$a[2])
-  )
-  
-  output <- apply(transformed_samples, 1, Pmodel, R0 = R0)
-  
-  data.frame(
-    n        = sort(output),
-    cum.prob = seq(1/length(output),1,1/length(output)),
-    R0       = R0
-  )
-}
-
-ridgeP <- bind_rows(
-  run_Pmodel(0.0) %>% mutate(n1=292,n2=583,n3=3167,n4=6333),
-  run_Pmodel(0.2) %>% mutate(n1=233,n2=467,n3=2533,n4=5067),
-  run_Pmodel(0.4) %>% mutate(n1=175,n2=350,n3=1900,n4=3800),
-  run_Pmodel(0.6) %>% mutate(n1=117,n2=233,n3=1267,n4=2533),
-  run_Pmodel(0.8) %>% mutate(n1=58,n2=117,n3=633,n4=1267)
-)
 
 ridges_min <- ggplot() +
   geom_polygon(data = dark.grey, aes(x = n, y = R0),
@@ -160,23 +123,28 @@ ridges_min <- ggplot() +
     rel_min_height = 0.01
   ) +
   scale_x_continuous(expand = c(0,0), limits = c(0,7000)) +
-  scale_fill_viridis_c(option = "C") +
-  xlab(expression(bold("Mean number of spillovers, ") * bolditalic(bar(n))[bolditalic(z)])) +
-  ylab(expression(bolditalic(R[0]))) +
-  ggtitle(expression(bold("Minimum annual number of zoonotic spillovers"))) +
-  labs(tag = expression(bold("A"))) +
+  scale_fill_viridis_c(
+    name = expression(italic(bar(n))[italic(z)]),
+    option = "C"
+  ) +
+  xlab(expression("Mean number of spillovers, " * italic(bar(n))[italic(z)])) +
+  ylab(expression(italic(R[0]))) +
+  ggtitle("Minimum annual number of zoonotic spillovers") +
+  labs(tag = "A") +
   theme_bw() +
   theme(
-    plot.title = element_text(hjust = 0, size = 16, face = "bold"),
-    axis.text  = element_text(size = 16, face = "bold"),
-    axis.title = element_text(size = 16, face = "bold"),
-    plot.tag   = element_text(size = 16, face = "bold"),
+    plot.title = element_text(hjust = 0, size = 18, face = "plain"),
+    axis.text  = element_text(size = 16, face = "plain"),
+    axis.title = element_text(size = 18, face = "plain"),
+    plot.tag   = element_text(size = 18, face = "bold"),
     plot.tag.position = c(0,1),
-    legend.position = "none"
+    legend.title = element_text(size = 18),
+    legend.text  = element_text(size = 16),
+    legend.position = "none"  
   )
 
 # ============================================================
-# Plot the annual number of spillovers: Figure 4B 
+# Plot annual spillovers: Fig5B
 # ============================================================
 
 ridges <- ggplot() +
@@ -192,28 +160,36 @@ ridges <- ggplot() +
   ) +
   scale_x_continuous(expand = c(0,0), limits = c(0,7000)) +
   scale_fill_viridis_c(
-    name = expression(bolditalic(bar(n))[bolditalic(z)]),
+    name = expression(italic(bar(n))[italic(z)]),
     option = "C"
   ) +
-  xlab(expression(bold("Mean number of spillovers, ") * bolditalic(bar(n))[bolditalic(z)])) +
-  ylab(expression(bolditalic(R[0]))) +
-  ggtitle(expression(bold("Annual number of zoonotic spillovers"))) +
-  labs(tag = expression(bold("B"))) +
+  xlab(expression("Mean number of spillovers, " * italic(bar(n))[italic(z)])) +
+  ylab(expression(italic(R[0]))) +
+  ggtitle("Annual number of zoonotic spillovers") +
+  labs(tag = "B") +
   theme_bw() +
   theme(
-    plot.title = element_text(hjust = 0, size = 16, face = "bold"),
-    axis.text  = element_text(size = 16, face = "bold"),
-    axis.title = element_text(size = 16, face = "bold"),
-    legend.title = element_text(size = 16, face = "bold"),
+    plot.title = element_text(hjust = 0, size = 18, face = "plain"),
+    axis.text  = element_text(size = 16, face = "plain"),
+    axis.title = element_text(size = 18, face = "plain"),
+    legend.title = element_text(size = 18),
     legend.text  = element_text(size = 16),
-    plot.tag = element_text(size = 16, face = "bold"),
+    plot.tag = element_text(size = 18, face = "bold"),
     plot.tag.position = c(0,1)
   )
 
 # ============================================================
-# Combine Figures 4A and 4B
+# Combine Fig5A and Fig5B
 # ============================================================
 
-Figure_4 <- ridges_min + ridges
+Fig5 <- ridges_min + ridges
 
-ggsave("Figure_4.png", Figure_4, height = 7, width = 14)
+ggsave(
+  filename = "Fig5.tiff",
+  plot = Fig5,
+  width = 14,
+  height = 7,
+  dpi = 300,
+  device = "tiff",
+  compression = "lzw"
+)

@@ -183,7 +183,7 @@ save(
 )
 
 # ============================================================
-# Plot pandemic timeline: Figure 1 
+# Plot pandemic timeline: Fig1 
 # ============================================================
 
 Timeline <- data.frame(
@@ -214,46 +214,37 @@ Periods <- data.frame(
   end = ymd(c(
     "1830-12-01", "1889-12-02", "1918-12-01",
     "1957-12-01", "1968-12-01", "2009-12-01"
-  )),
-  event.type = ""
+  ))
 )
 
-# Add interpandemic period lengths
+# Midpoints and interpandemic period lengths
 Periods <- Periods %>%
   mutate(
     length_years = round(as.numeric(difftime(end, start, units = "days")) / 365.25, 1),
     mid_date     = start + (end - start) / 2,
-    # Update 41 to "41 years"
     length_label = ifelse(length_years == 41, "41 years", as.character(length_years))
   )
 
-Figure_1 <- ggplot(Timeline, aes(x = when, y = 0)) +
+Fig1 <- ggplot(Timeline, aes(x = when, y = 0)) +
   geom_line(color = "black") +
   geom_segment(
     data = Periods,
     aes(x = start, xend = end, y = 0, yend = 0),
-    linewidth = 2,
-    color = "black"
+    linewidth = 2, color = "black"
   ) +
   geom_segment(
     data = Timeline,
-    aes(x = when, xend = when, y = 0, yend = 0.001),  
-    linewidth = 0.7,
-    color = "black"
+    aes(x = when, xend = when, y = 0, yend = 0.001),
+    linewidth = 0.7, color = "black"
   ) +
   geom_text(
     data = Timeline,
-    aes(x = when, y = 0.002, label = what),  
-    angle = 45,
-    hjust = 0,
-    size = 4,
-    color = "black"
-  ) +
+    aes(x = when, y = 0.002, label = what),
+    angle = 45, hjust = 0, size = 4) +
   geom_text(
     data = Periods,
-    aes(x = mid_date, y = -0.001, label = length_label),  
-    size = 4,
-    color = "black"
+    aes(x = mid_date, y = -0.001, label = length_label),
+    size = 4, fontface = "plain"
   ) +
   geom_point(aes(y = 0), color = "black") +
   scale_x_date(
@@ -262,48 +253,47 @@ Figure_1 <- ggplot(Timeline, aes(x = when, y = 0)) +
     expand = expansion(mult = c(0.05, 0.1))
   ) +
   scale_y_continuous(
-    name = "",
-    limits = c(-0.003, 0.03),  
-    breaks = NULL,
-    expand = expansion(mult = c(0, 0))
+    name = "", limits = c(-0.003, 0.03), breaks = NULL, expand = expansion(mult = c(0, 0))
   ) +
   theme_minimal() +
   theme(
-    axis.title = element_text(size = 16, face = "bold"),
-    axis.text.x = element_text(
-      size = 16, face = "bold",
-      margin = margin(t = 10)  
-    ),
+    axis.title = element_text(size = 14, face = "plain"),
+    axis.text.x = element_text(size = 14, face = "plain", margin = margin(t = 5)),
     axis.text.y = element_blank(),
     axis.ticks.y = element_blank()
   )
 
-ggsave("Figure_1.png", Figure_1, height = 6, width = 10)
+ggsave("Fig1.tiff", Fig1, width = 10, height = 6, dpi = 300, device = "tiff", compression = "lzw")
 
 # ============================================================
-# Plot interpandemic period distributions: Figure A2
+# Plot interpandemic period distributions: FigA2
 # ============================================================
 
-period = seq(0, 100)
-psi.fit = data.frame(period, prob = dgamma(period, shape = alpha0, scale = theta0))
+period <- seq(0, 100)
+psi.fit <- data.frame(period, prob = dgamma(period, shape = alpha0, scale = theta0))
 
-Figure_A2 = ggplot(psi.fit, aes(period, prob)) +
-  geom_ribbon(aes(ymin = 0, ymax = prob),
-              fill = "steelblue", color = "black") +
+FigA2 <- ggplot(psi.fit, aes(period, prob)) +
+  geom_ribbon(aes(ymin = 0, ymax = prob), fill = "steelblue", color = "black") +
+  annotate("point", x = 11, y = 0, color = "black", size = 3) +
+  annotate("point", x = 49, y = 0, color = "black", size = 3) +
+  annotate("point", x = 59, y = 0, color = "black", size = 3) +
+  annotate("point", x = 29, y = 0, color = "black", size = 3) +
+  annotate("point", x = 39, y = 0, color = "black", size = 3) +
+  annotate("point", x = 41, y = 0, color = "black", size = 3) +
   xlab("Interpandemic period, *ψ* (years)") +
   ylab("Probability") +
   theme_bw() +
   theme(
-    axis.text = element_text(size = 16, face = "bold"),
-    axis.title = element_text(size = 16, face = "bold"),
+    axis.text = element_text(size = 16, face = "plain"),
+    axis.title = element_text(size = 18, face = "plain"),
     legend.position = "none"
   ) +
   theme(axis.title.x = element_markdown())
 
-ggsave("Figure_A2.png", Figure_A2, height = 4, width = 10)
+ggsave("FigA2.tiff", FigA2, width = 10, height = 4, dpi = 300, device = "tiff", compression = "lzw")
 
 # ============================================================
-# Plot the effect of date on the interpandemic period: Figure A3
+# Plot the effect of date on the interpandemic period: FigA3
 # ============================================================
 
 plot_data <- data.frame(
@@ -312,17 +302,16 @@ plot_data <- data.frame(
   mean  = delta0 + delta1 * year
 )
 
-Figure_A3 <- ggplot(plot_data, aes(x = dates, y = dd)) +
-  geom_point(size = 4) +
-  geom_line(aes(y = mean)) +
+FigA3 <- ggplot(plot_data, aes(x = dates, y = dd)) +
+  geom_point(size = 3, color = "black") +
+  geom_line(aes(y = mean), color = "black", linewidth = 1.2) +
   xlab("Year of pandemic start") +
   ylab("Interpandemic period, *Ψ*") +
   theme_bw() +
   theme(
-    axis.text  = element_text(size = 16, face = "bold"),
-    axis.title = element_text(size = 16, face = "bold"),
+    axis.text = element_text(size = 16, face = "plain"),
+    axis.title = element_text(size = 18, face = "plain"),
     axis.title.y = element_markdown()
   )
 
-ggsave("Figure_A3.png", Figure_A3, height = 8, width = 10)
-
+ggsave("FigA3.tiff", FigA3, width = 10, height = 6, dpi = 300, device = "tiff", compression = "lzw")

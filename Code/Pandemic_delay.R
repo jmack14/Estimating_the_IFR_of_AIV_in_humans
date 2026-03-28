@@ -99,19 +99,35 @@ subset <- filter(mean.Lambda, O %in% c(5, 10, 20, 30, 40, 50)) %>%
   mutate(rounded = round(mean.delay0, 1))
 
 # ============================================================
-# Plot the effect of the number of zoonotic spillovers prevented on pandemic delay time: Figure 3
+# Plot the effect of the number of zoonotic spillovers prevented on pandemic delay time: Fig4
 # ============================================================
 
-Figure_3 <- ggplot(data = mean.Lambda, aes(x = O)) +
+# Prepare labels for selected points
+subset <- filter(mean.Lambda, O %in% c(5, 10, 20, 30, 40, 50)) %>%
+  mutate(rounded = round(mean.delay0, 1))
+
+Fig4 <- ggplot(data = mean.Lambda, aes(x = O)) +
   geom_ribbon(aes(ymin = min.delay0, ymax = max.delay0), fill = "dodgerblue", alpha = 0.25) +
   geom_ribbon(aes(ymin = lowerq, ymax = upperq), fill = "dodgerblue", alpha = 0.75) +
-  geom_line(aes(y = mean.delay0)) +
-  geom_point(data = subset, aes(x = O, y = mean.delay0)) +
-  geom_text(data = subset, aes(x = O, y = mean.delay0, label = rounded), hjust = 0.8, vjust = -1) +
-  theme_classic() +
+  geom_line(aes(y = mean.delay0), size = 1) +
+  geom_point(data = subset, aes(x = O, y = mean.delay0), size = 3, color = "black") +
+  geom_text(data = subset, aes(x = O, y = mean.delay0, label = rounded),
+            hjust = 0.8, vjust = -1, size = 4, fontface = "plain") +
   xlab("% Zoonotic spillovers to humans prevented") +
-  ylab("Delay to next pandemic (years)")+
-  theme(axis.text = element_text(size = 14, face = "bold"),axis.title = element_text(size = 14, face = "bold"))
+  ylab("Delay to next pandemic (years)") +
+  theme_bw() +
+  theme(
+    axis.text = element_text(size = 14),       
+    axis.title = element_text(size = 14, face = "plain"),  
+    plot.margin = margin(t = 10, r = 10, b = 10, l = 10)
+  )
 
-ggsave("Figure_3.png", Figure_3, width = 6, height = 4, dpi = 300)
-
+ggsave(
+  filename = "Fig4.tiff",
+  plot = Fig4,
+  device = "tiff",
+  width = 8,      
+  height = 5,     
+  dpi = 300,
+  compression = "lzw"
+)

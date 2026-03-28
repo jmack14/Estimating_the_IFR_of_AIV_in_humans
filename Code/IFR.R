@@ -180,33 +180,65 @@ write.csv(res_2$sort_output, "mean_nh_53.5.csv", row.names = FALSE, quote = FALS
 write.csv(res_3$sort_output, "mean_nh_18.5.csv", row.names = FALSE, quote = FALSE)
 
 # ============================================================
-# Plot the mean annual number of human infections with AIV
+# Plot the mean annual number of human infections with AIV: Fig2A
 # ============================================================
 
-Figure_2A <- ggplot() +
-  geom_line(data = res_1$sort_output, aes(x = log(meannh,10), y = cum.prob, colour = "orange"), size = 1.1) +
-  geom_line(data = res_2$sort_output, aes(x = log(meannh,10), y = cum.prob, colour = "blue"), size = 1.1) +
-  geom_line(data = res_3$sort_output, aes(x = log(meannh,10), y = cum.prob, colour = "red"), size = 1.1) +
-  geom_point(data = res_1$quarts, aes(x = log(n,10), y = cprob)) +
-  geom_point(data = res_2$quarts, aes(x = log(n,10), y = cprob)) +
-  geom_point(data = res_3$quarts, aes(x = log(n,10), y = cprob)) +
-  geom_text_repel(data = res_1$quarts, aes(x = log(n,10), y = cprob, label = round(n,0)), size = 6, hjust = 0, vjust = 1) +
-  geom_text_repel(data = res_2$quarts, aes(x = log(n,10), y = cprob, label = round(n,0)), size = 6, hjust = 0, vjust = 1) +
-  geom_text_repel(data = res_3$quarts, aes(x = log(n,10), y = cprob, label = round(n,0)), size = 6, hjust = 1, vjust = 0) +
-  ylab("Quantiles") +xlab(expression(bold("Mean number of human infections, ") * bolditalic(bar(n))[h]))+
-  scale_x_continuous(breaks = seq(3,5), labels = c("1,000","10,000","100,000"), limits = c(3,5)) +
-  scale_color_manual(values = c("blue","red","orange"), labels = c("53.5","38","18.5")) +
-  labs(color = "Mean interpandemic\nperiod (years)") +
-  labs(tag = expression(bold("A")))+
-  theme_bw() +
-  theme(axis.text = element_text(size = 16, face = "bold"),
-        axis.title = element_text(size = 16, face = "bold"),
-        legend.position = c(0.8,0.4),
-        legend.key.size = unit(1.5,"cm"),
-        legend.title = element_text(size = 16, face = "bold"),
-        legend.text = element_text(size = 16),
-        plot.tag = element_text(size = 16, face = "bold"),
-        plot.tag.position = c(0,1))
+cols <- c(
+  "53.5" = "#1f78b4",  # blue
+  "38"   = "#e31a1c",  # red
+  "18.5" = "#ff7f00"   # orange
+)
+
+base_theme <- theme_bw() +
+  theme(
+    axis.text = element_text(size = 12),
+    axis.title = element_text(size = 12),
+    legend.title = element_text(size = 12),
+    legend.text = element_text(size = 12),
+    plot.tag = element_text(size = 12, face = "bold"),
+    plot.tag.position = c(0,1)
+  )
+
+Fig2A <- ggplot() +
+  geom_line(data = res_1$sort_output, aes(x = meannh, y = cum.prob, colour = "38"), size = 0.9) +
+  geom_line(data = res_2$sort_output, aes(x = meannh, y = cum.prob, colour = "53.5"), size = 0.9) +
+  geom_line(data = res_3$sort_output, aes(x = meannh, y = cum.prob, colour = "18.5"), size = 0.9) +
+  
+  geom_point(data = res_1$quarts, aes(x = n, y = cprob), size = 1.5) +
+  geom_point(data = res_2$quarts, aes(x = n, y = cprob), size = 1.5) +
+  geom_point(data = res_3$quarts, aes(x = n, y = cprob), size = 1.5) +
+  
+  geom_text_repel(data = res_1$quarts, aes(x = n, y = cprob, label = round(n,0)),
+                  size = 3.5, hjust = 0, vjust = 1) +
+  geom_text_repel(data = res_2$quarts, aes(x = n, y = cprob, label = round(n,0)),
+                  size = 3.5, hjust = 0, vjust = 1) +
+  geom_text_repel(data = res_3$quarts, aes(x = n, y = cprob, label = round(n,0)),
+                  size = 3.5, hjust = 1, vjust = 0) +
+  
+  ylab("Cumulative probability") +
+  
+  xlab(expression(Mean~number~of~human~infections*","~bar(italic(n))[h])) +
+  
+  scale_x_log10(
+    breaks = c(1000, 10000, 100000),
+    labels = c("1,000","10,000","100,000"),
+    limits = c(1000, 100000)
+  ) +
+  
+  scale_color_manual(
+    values = cols,
+    breaks = c("18.5","38","53.5"),
+    labels = c("18.5","38","53.5")
+  ) +
+  
+  labs(color = "Mean interpandemic\nperiod (years)",
+       tag = "A") +
+  
+  base_theme +
+  theme(
+    legend.position = c(0.78,0.35),
+    legend.key.size = unit(0.6,"cm")
+  )
 
 # ============================================================
 # Prepare IFR distributions
@@ -249,60 +281,55 @@ q2 <- get_quarts(ifr_2)
 q3 <- get_quarts(ifr_3)
 
 # ============================================================
-# Plot the IFRs: Figure 2B
+# Plot the IFRs: Fig2B
 # ============================================================
 
-Figure_2B <- ggplot() +
-  geom_line(data = ifr_1, aes(x = log(IFR,10), y = cum.prob, colour = "orange"), size = 1.1) +
-  geom_line(data = ifr_2, aes(x = log(IFR,10), y = cum.prob, colour = "blue"),   size = 1.1) +
-  geom_line(data = ifr_3, aes(x = log(IFR,10), y = cum.prob, colour = "red"),    size = 1.1) +
+Fig2B <- ggplot() +
+  geom_line(data = ifr_1, aes(x = IFR, y = cum.prob, colour = "38"), size = 0.9) +
+  geom_line(data = ifr_2, aes(x = IFR, y = cum.prob, colour = "53.5"), size = 0.9) +
+  geom_line(data = ifr_3, aes(x = IFR, y = cum.prob, colour = "18.5"), size = 0.9) +
   
-  geom_point(data = q1, aes(x = log(IFR,10), y = cprob)) +
-  geom_point(data = q2, aes(x = log(IFR,10), y = cprob)) +
-  geom_point(data = q3, aes(x = log(IFR,10), y = cprob)) +
+  geom_point(data = q1, aes(x = IFR, y = cprob), size = 1.5) +
+  geom_point(data = q2, aes(x = IFR, y = cprob), size = 1.5) +
+  geom_point(data = q3, aes(x = IFR, y = cprob), size = 1.5) +
   
-  geom_text_repel(data = q1, aes(x = log(IFR,10), y = cprob, label = round(IFR,1)),
-                  size = 6, hjust = 0, vjust = 1) +
-  geom_text_repel(data = q2, aes(x = log(IFR,10), y = cprob, label = round(IFR,1)),
-                  size = 6, hjust = 0, vjust = 1) +
-  geom_text_repel(data = q3, aes(x = log(IFR,10), y = cprob, label = round(IFR,1)),
-                  size = 6, hjust = 1, vjust = 0) +
+  geom_text_repel(data = q1, aes(x = IFR, y = cprob, label = round(IFR,1)),
+                  size = 3.5, hjust = 0, vjust = 1) +
+  geom_text_repel(data = q2, aes(x = IFR, y = cprob, label = round(IFR,1)),
+                  size = 3.5, hjust = 0, vjust = 1) +
+  geom_text_repel(data = q3, aes(x = IFR, y = cprob, label = round(IFR,1)),
+                  size = 3.5, hjust = 1, vjust = 0) +
   
-  ylab("Quantiles") +
-  xlab("Infection fatality ratio per 10,000 infections") +
+  ylab("Cumulative probability") +
+  xlab("Infection fatality ratio (per 10,000 infections)") +
   
-  scale_x_continuous(
-    breaks = seq(0, 3),
-    labels = c("1","10","100","1000"),
-    limits = c(0.5, 2.25)
+  scale_x_log10(
+    breaks = c(1,10,100,1000)
   ) +
   
-  scale_color_manual(
-    values = c("blue","red","orange"),
-    labels = c("53.5","38","18.5")
-  ) +
+  scale_color_manual(values = cols) +
   
-  labs(tag = expression(bold("B"))) +
+  labs(tag = "B") +
   
-  theme_bw() +
-  theme(
-    axis.text = element_text(size = 16, face = "bold"),
-    axis.title = element_text(size = 16, face = "bold"),
-    legend.position = "none",   # ✅ legend removed
-    plot.tag = element_text(size = 16, face = "bold"),
-    plot.tag.position = c(0,1)
-  )
+  base_theme +
+  theme(legend.position = "none")
 
 # ============================================================
-# Combine Figure 2A and 2B 
+# Combine Fig2A and Fig2B 
 # ============================================================
-Figure_2 <- Figure_2A + Figure_2B +
-  plot_layout(ncol = 1, heights = c(1, 1)) 
+Fig2 <- Fig2A + Fig2B +
+  plot_layout(ncol = 1)
 
-ggsave("Figure_2.png", width = 12, height = 14, dpi = 300)
+ggsave("Fig2.tiff",
+       Fig2,
+       width = 7,
+       height = 8,
+       dpi = 300,
+       device = "tiff",
+       compression = "lzw")
 
 # ============================================================
-# Plot IFR comparison: Figure 3
+# Plot IFR comparison: Fig3
 # ============================================================
 
 # IFR data
@@ -312,7 +339,6 @@ ifr_data <- data.frame(
             "AIV (53.5 years)",
             "AIV (38 years)",
             "AIV (18.5 years)"),
-  
   estimate = c(4.7, 16, 16, 32, 46),
   lower = c(2.9, 16, 5.6, 9.6, 17),
   upper = c(6.5, 16, 33, 75, 97)
@@ -328,77 +354,103 @@ ifr_data$Virus <- factor(
                  "Seasonal influenza"))
 )
 
-Figure_3 <- ggplot(ifr_data, aes(x = estimate, y = Virus)) +
-  
+base_theme <- theme_bw() +
+  theme(
+    axis.text = element_text(size = 14, face = "plain", color = "black"),   # bigger tick labels
+    axis.title = element_text(size = 14, face = "plain", color = "black"), # bigger axis titles
+    plot.tag = element_text(size = 14, face = "bold"),
+    legend.position = "none"
+  )
+
+Fig3 <- ggplot(ifr_data, aes(x = estimate, y = Virus)) +
   geom_errorbarh(aes(
     xmin = ifelse(Virus != "SARS-CoV-2", lower, NA),
     xmax = ifelse(Virus != "SARS-CoV-2", upper, NA)
   ),
   height = 0.2,
   size = 1.2) +
-  
-  geom_point(size = 4, color = "red") +
-  
-  geom_text(aes(label = estimate),
-            nudge_x = 2,
-            nudge_y = 0.20,
-            size = 5,
-            fontface = "bold") +
-  
+  geom_point(size = 2.5, color = "red") +
+  geom_text_repel(aes(label = estimate),
+                  size = 4.5,       # slightly larger labels for readability
+                  fontface = "plain",
+                  nudge_x = 0.5,
+                  nudge_y = 0.20,
+                  direction = "y",
+                  segment.size = 0.2) +
   scale_x_continuous(expand = expansion(mult = c(0.02, 0.12))) +
-  
-  xlab("Infection fatality ratio per 10,000 infections") +
+  xlab("Infection fatality ratio (per 10,000 infections)") +
   ylab(NULL) +
-  
-  theme_bw() +
-  theme(
-    axis.text = element_text(size = 16, face = "bold", color = "black"),   # tick labels
-    axis.title = element_text(size = 16, face = "bold", color = "black")   # axis titles
-  )
+  base_theme
 
-ggsave("Figure_3.png",
-       Figure_3,
-       width = 8,
-       height = 5,
-       dpi = 300)
+ggsave(
+  filename = "Fig3.tiff",
+  plot = Fig3,
+  width = 8,
+  height = 5,
+  dpi = 300,
+  device = "tiff",
+  compression = "lzw"
+)
 
 # ============================================================
-# Plot parameter distributions: Figure A1
+# Plot parameter distributions: FigA1
 # ============================================================
 
 plot_distributions <- function(transformed_samples) {
-  options(scipen = 999)
   
   plot_a <- ggplot(transformed_samples, aes(x = a)) +
     geom_histogram(bins = 30, fill = "steelblue", color = "black") +
-    labs(x = "Probability", y = "Count") +
-    theme_bw() + theme(plot.title = element_text(hjust = 0.5, face = "bold", size = 16),
-                       axis.text = element_text(size = 16, face = "bold"),
-                       axis.title = element_text(size = 16, face = "bold")) +
-    ggtitle("Probability that a strain of AIV with pandemic potential emerges, *a*") +
-    theme(plot.title = element_markdown())
+    labs(x = expression(italic(a)), y = "Count") +
+    ggtitle("Probability that a strain of AIV with pandemic potential emerges") +
+    theme_bw() +
+    theme(
+      plot.title = element_text(hjust = 0.5, size = 18),     
+      axis.text = element_text(size = 16),                    
+      axis.title = element_text(size = 18),                   
+      plot.margin = margin(t = 15, r = 10, b = 15, l = 10)
+    )
   
   plot_Rstar <- ggplot(transformed_samples, aes(x = Rstar)) +
     geom_histogram(bins = 30, fill = "steelblue", color = "black") +
-    labs(x = "Probability", y = "Count") +
-    theme_bw() + theme(plot.title = element_text(hjust = 0.5, face = "bold", size = 16),
-                       axis.text = element_text(size = 16, face = "bold"),
-                       axis.title = element_text(size = 16, face = "bold")) +
-    ggtitle("Reproduction number of a reassortant AIV in humans, *R**") +
-    theme(plot.title = element_markdown())
+    labs(x = expression(italic(R)^"*"), y = "Count") +
+    ggtitle("Reproduction number of a reassortant AIV in humans") +
+    theme_bw() +
+    theme(
+      plot.title = element_text(hjust = 0.5, size = 18),
+      axis.text = element_text(size = 16),
+      axis.title = element_text(size = 18),
+      plot.margin = margin(t = 15, r = 10, b = 15, l = 10)
+    )
   
   plot_R0 <- ggplot(transformed_samples, aes(x = R0)) +
     geom_histogram(bins = 30, fill = "steelblue", color = "black") +
-    labs(x = "Probability", y = "Count") +
-    theme_bw() + theme(plot.title = element_text(hjust = 0.5, face = "bold", size = 16),
-                       axis.text = element_text(size = 16, face = "bold"),
-                       axis.title = element_text(size = 16, face = "bold")) +
-    ggtitle("Reproduction number of an AIV in humans prior to evolutionary change, *R*<sub>0") +
-    theme(plot.title = element_markdown())
+    labs(x = expression(italic(R)[0]), y = "Count") +
+    ggtitle("Reproduction number of an AIV in humans prior to evolutionary change") +
+    theme_bw() +
+    theme(
+      plot.title = element_text(hjust = 0.5, size = 18),
+      axis.text = element_text(size = 16),
+      axis.title = element_text(size = 18),
+      plot.margin = margin(t = 15, r = 10, b = 20, l = 10)
+    )
   
-  return((plot_a)/(plot_Rstar)/(plot_R0))
+  combined <- (plot_a / plot_Rstar / plot_R0) +
+    plot_annotation(tag_levels = 'A') &       
+    theme(
+      plot.tag = element_text(face = "bold", size = 18)  
+    )
+  
+  return(combined)
 }
 
-Figure_A1 <- plot_distributions(res_1$transformed_samples)
+FigA1 <- plot_distributions(res_1$transformed_samples)
 
-ggsave("Figure_A1.png", Figure_A1, height = 8, width = 10)
+ggsave(
+  filename = "FigA1.tiff",
+  plot = FigA1,
+  device = "tiff",
+  height = 10,
+  width = 12,
+  dpi = 300,
+  compression = "lzw"
+)
