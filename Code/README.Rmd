@@ -64,5 +64,4 @@ These files contain estimates of the annual number of human AIV infections and t
    - `IFR.R`
    - `Pandemic_delay.R`
    - `Spillover_comparison.R`
-   - `Risk.R`
 5. Outputs will be saved automatically to the `Output/` directory.
